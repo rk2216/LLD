@@ -1,4 +1,6 @@
+import api.AIEngine;
 import api.GameEngine;
+import api.RuleEngine;
 import game.Board;
 import game.Cell;
 import game.Move;
@@ -9,12 +11,14 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         GameEngine gameEngine = new GameEngine();
+        AIEngine aiEngine = new AIEngine();
+        RuleEngine ruleEngine = new RuleEngine();
         Board board = gameEngine.start("TicTacToe");
 
         //make moves in a loop
         int row, col;
         Scanner scanner = new Scanner(System.in);
-        while(!gameEngine.isComplete(board).isOver()) {
+        while(!ruleEngine.getState(board).isOver()) {
             System.out.println("Make your move!");
             System.out.println(board);
 
@@ -22,18 +26,18 @@ public class Main {
             col = scanner.nextInt();
 
             Player human = new Player("X");
-            Move humanMove = new Move(new Cell(row, col));
-            gameEngine.move(board, human, humanMove);
+            Move humanMove = new Move(new Cell(row, col), human);
+            gameEngine.move(board, humanMove);
 
             Player computer = new Player("O");
-            if(!gameEngine.isComplete(board).isOver()) {
-                Move computerMove = gameEngine.suggestMove(computer, board);
-                gameEngine.move(board, computer, computerMove);
+            if(!ruleEngine.getState(board).isOver()) {
+                Move computerMove = aiEngine.suggestMove(computer, board);
+                gameEngine.move(board, computerMove);
             }
 
         }
 
-        System.out.println("Game Result: " + gameEngine.isComplete(board));
+        System.out.println("Game Result: " + ruleEngine.getState(board));
         System.out.println(board);
     }
 }
