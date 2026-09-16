@@ -1,10 +1,7 @@
 package api;
 
 import boards.TicTacToeBoard;
-import game.Board;
-import game.GameResult;
-import game.Move;
-import game.Player;
+import game.*;
 
 public class GameEngine {
     public static void main(String[] args) {
@@ -110,6 +107,22 @@ public class GameEngine {
             return new GameResult(false, "-");
         }
         return new GameResult(false, "-");
+    }
+
+    public Move suggestMove(Player computer, Board board) {
+        if(board instanceof TicTacToeBoard) {
+            TicTacToeBoard board1 = (TicTacToeBoard) board;
+            for(int i=0; i<3; i++) {
+                for(int j=0; j<3; j++) {
+                    if(board1.getCell(i, j) == null) {
+                        return new Move(new Cell(i, j));
+                    }
+                }
+            }
+            throw new IllegalStateException();
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 }
 
