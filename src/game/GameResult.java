@@ -9,4 +9,11 @@ public class GameResult {
         this.winner = winner;
     }
 
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
 }
