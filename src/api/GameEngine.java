@@ -4,10 +4,6 @@ import boards.TicTacToeBoard;
 import game.*;
 
 public class GameEngine {
-    public static void main(String[] args) {
-
-
-    }
 
     public Board start(String type) {
         if(type.equals("TicTacToe")) {
@@ -32,12 +28,14 @@ public class GameEngine {
             String firstCharacter = "-";
             boolean rowComplete = true;
             for(int i=0; i<3; i++) {
-                rowComplete = true;
                 firstCharacter = board1.getCell(i,0);
-                for(int j=1; j<3; j++) {
-                    if(!board1.getCell(i,j).equals(firstCharacter)) {
-                        rowComplete = false;
-                        break;
+                rowComplete = firstCharacter != null;
+                if(firstCharacter != null) {
+                    for(int j=1; j<3; j++) {
+                        if(!firstCharacter.equals(board1.getCell(i,j))) {
+                            rowComplete = false;
+                            break;
+                        }
                     }
                 }
                 if(rowComplete) {
@@ -50,12 +48,14 @@ public class GameEngine {
 
             boolean colComplete = true;
             for(int i=0; i<3; i++) {
-                colComplete = true;
                 firstCharacter = board1.getCell(0, i);
-                for(int j=1; j<3; j++) {
-                    if(!board1.getCell(j, i).equals(firstCharacter)) {
-                        colComplete = false;
-                        break;
+                colComplete = firstCharacter != null;
+                if(firstCharacter != null) {
+                    for (int j = 1; j < 3; j++) {
+                        if (!firstCharacter.equals(board1.getCell(j, i))) {
+                            colComplete = false;
+                            break;
+                        }
                     }
                 }
                 if(colComplete) {
@@ -66,26 +66,28 @@ public class GameEngine {
                 return new GameResult(true, firstCharacter);
             }
 
-            boolean diagComplete = true;
+            firstCharacter = board1.getCell(0, 0);
+            boolean diagComplete = firstCharacter != null;
             for(int i=1; i<3; i++) {
-                diagComplete = true;
-                firstCharacter = board1.getCell(0, 0);
-                if(!board1.getCell(i, i).equals(firstCharacter)) {
-                    diagComplete = false;
-                    break;
+                if(firstCharacter != null) {
+                    if (!firstCharacter.equals(board1.getCell(i, i))) {
+                        diagComplete = false;
+                        break;
+                    }
                 }
             }
             if(diagComplete) {
                 return new GameResult(true, firstCharacter);
             }
 
-            boolean revDiagComplete = true;
+            firstCharacter = board1.getCell(0, 2);
+            boolean revDiagComplete = firstCharacter != null;
             for(int i=1; i<3; i++) {
-                revDiagComplete = true;
-                firstCharacter = board1.getCell(0, 2);
-                if(!board1.getCell(i,2-i).equals(firstCharacter)) {
-                    revDiagComplete = false;
-                    break;
+                if(firstCharacter != null) {
+                    if (!firstCharacter.equals(board1.getCell(i, 2 - i))) {
+                        revDiagComplete = false;
+                        break;
+                    }
                 }
             }
             if(revDiagComplete) {
