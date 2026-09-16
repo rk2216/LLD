@@ -12,12 +12,21 @@ public class GameEngine {
 
     }
 
-    public Board start() {
-        return new Board();
+    public Board start(String type) {
+        if(type.equals("TicTacToe")) {
+            return new TicTacToeBoard();
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void move(Board board, Player player, Move move) {
-
+        if(board instanceof TicTacToeBoard) {
+            TicTacToeBoard board1 = (TicTacToeBoard) board;
+            board1.setCell(move.getCell(), player.symbol());
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public GameResult isComplete(Board board) {
