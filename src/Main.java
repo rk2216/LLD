@@ -16,6 +16,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while(!gameEngine.isComplete(board).isOver()) {
             System.out.println("Make your move!");
+            System.out.println(board);
+
             row = scanner.nextInt();
             col = scanner.nextInt();
 
@@ -32,6 +34,6 @@ public class Main {
         }
 
         System.out.println("Game Result: " + gameEngine.isComplete(board));
-
+        System.out.println(board);
     }
 }
