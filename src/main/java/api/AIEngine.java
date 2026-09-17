@@ -56,8 +56,9 @@ public class AIEngine {
             for(int j=0; j<3; j++) {
                 if(board.getSymbol(i, j) == null) {
                     Move move = new Move(new Cell(i, j), computer);
-                    board.move(move);
-                    if(ruleEngine.getState(board).isOver()) {
+                    TicTacToeBoard boardCopy = board.copy();
+                    boardCopy.move(move);
+                    if(ruleEngine.getState(boardCopy).isOver()) {
                         return move;
                     }
                 }
@@ -69,8 +70,9 @@ public class AIEngine {
             for(int j=0; j<3; j++) {
                 if(board.getSymbol(i, j) == null) {
                     Move move = new Move(new Cell(i, j), computer.flip());
-                    board.move(move);
-                    if(ruleEngine.getState(board).isOver()) {
+                    TicTacToeBoard boardCopy = board.copy();
+                    boardCopy.move(move);
+                    if(ruleEngine.getState(boardCopy).isOver()) {
                         return new Move(new Cell(i, j), computer);
                     }
                 }
