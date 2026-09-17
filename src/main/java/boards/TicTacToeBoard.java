@@ -4,7 +4,7 @@ import game.Board;
 import game.Cell;
 import game.Move;
 
-public class TicTacToeBoard extends Board {
+public class TicTacToeBoard implements Board {
     String[][] cells = new String[3][3];
     public String getSymbol(int i, int j) {
         return cells[i][j];
@@ -29,5 +29,14 @@ public class TicTacToeBoard extends Board {
     @Override
     public void move(Move move) {
         setCell(move.getCell(), move.getPlayer().symbol());
+    }
+
+    @Override
+    public TicTacToeBoard copy() {
+        TicTacToeBoard ticTacToeBoard = new TicTacToeBoard();
+        for(int i=0; i<3; i++) {
+            System.arraycopy(cells[i], 0, ticTacToeBoard.cells[i], 0, 3);
+        }
+        return ticTacToeBoard;
     }
 }
