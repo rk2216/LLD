@@ -4,79 +4,37 @@ import boards.TicTacToeBoard;
 import game.Board;
 import game.GameState;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 public class RuleEngine {
 
     public GameState getState(Board board) {
         if(board instanceof TicTacToeBoard) {
             TicTacToeBoard board1 = (TicTacToeBoard) board;
             String firstCharacter = "-";
-            boolean rowComplete = true;
-            for(int i=0; i<3; i++) {
-                firstCharacter = board1.getSymbol(i,0);
-                rowComplete = firstCharacter != null;
-                if(firstCharacter != null) {
-                    for(int j=1; j<3; j++) {
-                        if(!firstCharacter.equals(board1.getSymbol(i,j))) {
-                            rowComplete = false;
-                            break;
-                        }
-                    }
-                }
-                if(rowComplete) {
-                    break;
-                }
-            }
-            if(rowComplete) {
-                return new GameState(true, firstCharacter);
-            }
 
-            boolean colComplete = true;
-            for(int i=0; i<3; i++) {
-                firstCharacter = board1.getSymbol(0, i);
-                colComplete = firstCharacter != null;
-                if(firstCharacter != null) {
-                    for (int j = 1; j < 3; j++) {
-                        if (!firstCharacter.equals(board1.getSymbol(j, i))) {
-                            colComplete = false;
-                            break;
-                        }
-                    }
-                }
-                if(colComplete) {
-                    break;
-                }
-            }
-            if(colComplete) {
-                return new GameState(true, firstCharacter);
-            }
+            BiFunction<Integer, Integer, String> getRowNextCharacter = (i, j) -> board1.getSymbol(i, j);
+            BiFunction<Integer, Integer, String> getColNextCharacter = (i, j) -> board1.getSymbol(j, i);
 
-            firstCharacter = board1.getSymbol(0, 0);
-            boolean diagComplete = firstCharacter != null;
-            for(int i=1; i<3; i++) {
-                if(firstCharacter != null) {
-                    if (!firstCharacter.equals(board1.getSymbol(i, i))) {
-                        diagComplete = false;
-                        break;
-                    }
-                }
-            }
-            if(diagComplete) {
-                return new GameState(true, firstCharacter);
-            }
+            GameState rowWin = isVictory(getRowNextCharacter);
+            if(rowWin != null)
+                return rowWin;
 
-            firstCharacter = board1.getSymbol(0, 2);
-            boolean revDiagComplete = firstCharacter != null;
-            for(int i=1; i<3; i++) {
-                if(firstCharacter != null) {
-                    if (!firstCharacter.equals(board1.getSymbol(i, 2 - i))) {
-                        revDiagComplete = false;
-                        break;
-                    }
-                }
-            }
-            if(revDiagComplete) {
-                return new GameState(true, firstCharacter);
-            }
+            GameState colWin = isVictory(getColNextCharacter);
+            if(colWin != null)
+                return colWin;
+
+            Function<Integer, String> getDiagNextCharacter = i -> board1.getSymbol(i, i);
+            Function<Integer, String> getRevDiagNextCharacter = i -> board1.getSymbol(i, 2-i);
+
+            GameState diagWin = isDiagVictory(getDiagNextCharacter);
+            if(diagWin != null)
+                return diagWin;
+
+            GameState revDiagWin = isDiagVictory(getRevDiagNextCharacter);
+            if(revDiagWin != null)
+                return revDiagWin;
 
             int countOfFilledCells = 0;
             for(int i=0; i<3; i++) {
@@ -93,5 +51,36 @@ public class RuleEngine {
             return new GameState(false, "-");
         }
         return new GameState(false, "-");
+    }
+
+    private GameState isVictory(BiFunction<Integer, Integer, String> next) {
+        for(int i=0; i<3; i++) {
+            boolean possibleStreak = true;
+            for(int j=0; j<3; j++) {
+                if(next.apply(i, j) == null ||
+                        !next.apply(i, 0).equals(next.apply(i, j))) {
+                    possibleStreak = false;
+                    break;
+                }
+            }
+            if(possibleStreak) {
+                return new GameState(true, next.apply(i, 0));
+            }
+        }
+        return null;
+    }
+
+    private GameState isDiagVictory(Function<Integer, String> next) {
+        boolean possibleStreak = true;
+        for(int i=0; i<3; i++) {
+            if(next.apply(i) == null || !next.apply(0).equals(next.apply(i))) {
+                possibleStreak = false;
+                break;
+            }
+        }
+        if(possibleStreak) {
+            return new GameState(true, next.apply(0));
+        }
+        return null;
     }
 }
