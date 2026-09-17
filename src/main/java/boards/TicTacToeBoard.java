@@ -6,7 +6,7 @@ import game.Move;
 
 public class TicTacToeBoard extends Board {
     String[][] cells = new String[3][3];
-    public String getCell(int i, int j) {
+    public String getSymbol(int i, int j) {
         return cells[i][j];
     }
 
