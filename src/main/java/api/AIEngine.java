@@ -11,7 +11,7 @@ public class AIEngine {
         if(board instanceof TicTacToeBoard) {
             TicTacToeBoard board1 = (TicTacToeBoard) board;
             Move suggestion;
-            if(isStarting(board1, 4)) {
+            if(isStarting(board1, 3)) {
                 suggestion = getBasicMove(computer, board1);
             } else {
                 suggestion = getSmartMove(computer, board1);
