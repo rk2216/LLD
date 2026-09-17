@@ -11,7 +11,7 @@ public class TicTacToeBoard implements Board {
     }
 
     public void setCell(Cell cell, String symbol) {
-        if(cells[cell.getRow()][cell.getCol()] != null) {
+        if(cells[cell.getRow()][cell.getCol()] == null) {
             cells[cell.getRow()][cell.getCol()] = symbol;
         } else {
             throw new IllegalArgumentException();
