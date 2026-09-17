@@ -17,23 +17,23 @@ public class RuleEngine {
             BiFunction<Integer, Integer, String> getRowNextCharacter = (i, j) -> board1.getSymbol(i, j);
             BiFunction<Integer, Integer, String> getColNextCharacter = (i, j) -> board1.getSymbol(j, i);
 
-            GameState rowWin = isVictory(getRowNextCharacter);
-            if(rowWin != null)
+            GameState rowWin = outerTraversal(getRowNextCharacter);
+            if(rowWin.isOver())
                 return rowWin;
 
-            GameState colWin = isVictory(getColNextCharacter);
-            if(colWin != null)
+            GameState colWin = outerTraversal(getColNextCharacter);
+            if(colWin.isOver())
                 return colWin;
 
             Function<Integer, String> getDiagNextCharacter = i -> board1.getSymbol(i, i);
             Function<Integer, String> getRevDiagNextCharacter = i -> board1.getSymbol(i, 2-i);
 
-            GameState diagWin = isDiagVictory(getDiagNextCharacter);
-            if(diagWin != null)
+            GameState diagWin = traverse(getDiagNextCharacter);
+            if(diagWin.isOver())
                 return diagWin;
 
-            GameState revDiagWin = isDiagVictory(getRevDiagNextCharacter);
-            if(revDiagWin != null)
+            GameState revDiagWin = traverse(getRevDiagNextCharacter);
+            if(revDiagWin.isOver())
                 return revDiagWin;
 
             int countOfFilledCells = 0;
@@ -53,34 +53,31 @@ public class RuleEngine {
         return new GameState(false, "-");
     }
 
-    private GameState isVictory(BiFunction<Integer, Integer, String> next) {
+    private GameState outerTraversal(BiFunction<Integer, Integer, String> next) {
+        GameState result = new GameState(false, "-");
         for(int i=0; i<3; i++) {
-            boolean possibleStreak = true;
-            for(int j=0; j<3; j++) {
-                if(next.apply(i, j) == null ||
-                        !next.apply(i, 0).equals(next.apply(i, j))) {
-                    possibleStreak = false;
-                    break;
-                }
-            }
-            if(possibleStreak) {
-                return new GameState(true, next.apply(i, 0));
+            final int ii = i;
+            Function<Integer, String> traversal = (j) -> next.apply(ii, j);
+            GameState innerTraversal = traverse(traversal);
+            if(innerTraversal.isOver()) {
+                result = innerTraversal;
             }
         }
-        return null;
+        return result;
     }
 
-    private GameState isDiagVictory(Function<Integer, String> next) {
+    private GameState traverse(Function<Integer, String> traversal) {
+        GameState result = new GameState(false, "-");
         boolean possibleStreak = true;
-        for(int i=0; i<3; i++) {
-            if(next.apply(i) == null || !next.apply(0).equals(next.apply(i))) {
+        for(int j = 0; j <3; j++) {
+            if(traversal.apply(j) == null || !traversal.apply(0).equals(traversal.apply(j))) {
                 possibleStreak = false;
                 break;
             }
         }
         if(possibleStreak) {
-            return new GameState(true, next.apply(0));
+            result = new GameState(true, traversal.apply(0));
         }
-        return null;
+        return result;
     }
 }
