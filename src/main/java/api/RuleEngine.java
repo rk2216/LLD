@@ -3,10 +3,40 @@ package api;
 import boards.TicTacToeBoard;
 import game.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class RuleEngine {
+
+    Map<String, List<Rule<TicTacToeBoard>>> ruleMap = new HashMap<>();
+
+    public RuleEngine() {
+        String key = TicTacToeBoard.class.getName();
+        ruleMap.put(key, new ArrayList<>());
+        ruleMap.get(key).add(new Rule<>(board -> outerTraversal((i, j) -> board.getSymbol(i, j))));
+        ruleMap.get(key).add(new Rule<>(board -> outerTraversal((i, j) -> board.getSymbol(j, i))));
+        ruleMap.get(key).add(new Rule<>(board -> traverse((i) -> board.getSymbol(i, i))));
+        ruleMap.get(key).add(new Rule<>(board -> traverse((i) -> board.getSymbol(i, 2-i))));
+        ruleMap.get(key).add(new Rule<>(board -> {
+            int countOfFilledCells = 0;
+            for(int i=0; i<3; i++) {
+                for(int j=0; j<3; j++) {
+                    if(board.getSymbol(i, j) != null) {
+                        countOfFilledCells++;
+                    }
+                }
+            }
+            if(countOfFilledCells == 9) {
+                return new GameState(true, "-");
+            }
+
+            return new GameState(false, "-");
+        }));
+    }
 
     public GameInfo getInfo(Board board) {
         if(board instanceof TicTacToeBoard) {
@@ -45,44 +75,14 @@ public class RuleEngine {
     }
     public GameState getState(Board board) {
         if(board instanceof TicTacToeBoard) {
-            TicTacToeBoard board1 = (TicTacToeBoard) board;
-            String firstCharacter = "-";
-
-            BiFunction<Integer, Integer, String> getRowNextCharacter = (i, j) -> board1.getSymbol(i, j);
-            BiFunction<Integer, Integer, String> getColNextCharacter = (i, j) -> board1.getSymbol(j, i);
-
-            GameState rowWin = outerTraversal(getRowNextCharacter);
-            if(rowWin.isOver())
-                return rowWin;
-
-            GameState colWin = outerTraversal(getColNextCharacter);
-            if(colWin.isOver())
-                return colWin;
-
-            Function<Integer, String> getDiagNextCharacter = i -> board1.getSymbol(i, i);
-            Function<Integer, String> getRevDiagNextCharacter = i -> board1.getSymbol(i, 2-i);
-
-            GameState diagWin = traverse(getDiagNextCharacter);
-            if(diagWin.isOver())
-                return diagWin;
-
-            GameState revDiagWin = traverse(getRevDiagNextCharacter);
-            if(revDiagWin.isOver())
-                return revDiagWin;
-
-            int countOfFilledCells = 0;
-            for(int i=0; i<3; i++) {
-                for(int j=0; j<3; j++) {
-                    if(board1.getSymbol(i, j) != null) {
-                        countOfFilledCells++;
-                    }
+            TicTacToeBoard tBoard = (TicTacToeBoard) board;
+            List<Rule<TicTacToeBoard>> rules = ruleMap.get(TicTacToeBoard.class.getName());
+            for(Rule<TicTacToeBoard> r : rules) {
+                GameState gameState = r.condition.apply(tBoard);
+                if(gameState.isOver()) {
+                    return gameState;
                 }
             }
-            if(countOfFilledCells == 9) {
-                return new GameState(true, "-");
-            }
-
-            return new GameState(false, "-");
         }
         return new GameState(false, "-");
     }
@@ -113,6 +113,14 @@ public class RuleEngine {
             result = new GameState(true, traversal.apply(0));
         }
         return result;
+    }
+}
+
+class Rule<T extends Board> {
+    Function<T, GameState> condition;
+
+    public Rule(Function<T, GameState> condition) {
+        this.condition = condition;
     }
 }
 
