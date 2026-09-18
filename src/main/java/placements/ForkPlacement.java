@@ -1,7 +1,10 @@
 package placements;
 
-import game.Board;
+import boards.TicTacToeBoard;
 import game.Cell;
+import game.GameInfo;
+import game.Player;
+import utils.Utils;
 
 import java.util.Optional;
 
@@ -11,19 +14,24 @@ public class ForkPlacement implements Placement {
     private ForkPlacement(){}
 
     public static synchronized Placement get() {
-        if(forkPlacement == null) {
-            forkPlacement = new ForkPlacement();
-        }
+        forkPlacement = (ForkPlacement) Utils.getIfNull(forkPlacement, ForkPlacement::new);
         return forkPlacement;
     }
 
     @Override
-    public Optional<Cell> place(Board board) {
-        return Optional.empty();
+    public Optional<Cell> place(TicTacToeBoard board, Player player) {
+        //3. If you have a fork, then play it
+        //4. If opp has a fork, then block it
+        Cell best = null;
+        GameInfo gameInfo = ruleEngine.getInfo(board);
+        if(gameInfo.hasAFork()){
+            best = gameInfo.getForkCell();
+        }
+        return Optional.ofNullable(best);
     }
 
     @Override
     public Placement next() {
-        return null;
+        return CenterPlacement.get();
     }
 }

@@ -1,7 +1,10 @@
 package placements;
 
-import game.Board;
+import boards.TicTacToeBoard;
 import game.Cell;
+import game.Move;
+import game.Player;
+import utils.Utils;
 
 import java.util.Optional;
 
@@ -11,19 +14,34 @@ public class DefensivePlacement implements Placement {
     private DefensivePlacement(){}
 
     public static synchronized Placement get() {
-        if(defensivePlacement == null) {
-            defensivePlacement = new DefensivePlacement();
-        }
+        defensivePlacement = (DefensivePlacement) Utils.getIfNull(defensivePlacement, DefensivePlacement::new);
         return defensivePlacement;
     }
 
     @Override
-    public Optional<Cell> place(Board board) {
-        return Optional.empty();
+    public Optional<Cell> place(TicTacToeBoard board, Player player) {
+        //2. If opp has winning move, block it
+        return Optional.ofNullable(defense(player, board));
     }
 
     @Override
     public Placement next() {
+        return ForkPlacement.get();
+    }
+
+    private Cell defense(Player player, TicTacToeBoard board) {
+        for(int i=0; i<3; i++) {
+            for(int j=0; j<3; j++) {
+                if(board.getSymbol(i, j) == null) {
+                    Move move = new Move(new Cell(i, j), player.flip());
+                    TicTacToeBoard boardCopy = board.copy();
+                    boardCopy.move(move);
+                    if(ruleEngine.getState(boardCopy).isOver()) {
+                        return new Cell(i, j);
+                    }
+                }
+            }
+        }
         return null;
     }
 }
