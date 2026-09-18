@@ -2,7 +2,6 @@ package boards;
 
 import api.Rule;
 import api.RuleSet;
-import game.Board;
 import game.Cell;
 import game.GameState;
 import game.Move;

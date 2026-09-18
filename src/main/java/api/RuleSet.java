@@ -1,6 +1,6 @@
 package api;
 
-import game.Board;
+import boards.Board;
 
 import java.util.*;
 import java.util.function.Consumer;
