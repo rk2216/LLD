@@ -12,9 +12,22 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class TicTacToeBoard implements CellBoard {
-    String[][] cells = new String[3][3];
+    String[][] cells;
+    History history;
 
-    History history = new History();
+    public TicTacToeBoard() {
+        cells =  new String[3][3];
+        history = new History();
+    }
+
+    public TicTacToeBoard(History history) {
+        cells =  new String[3][3];
+        this.history = history;
+    }
+
+    public TicTacToeBoard(Representation boardProxy) {
+        //Construct TicTacToeBoard out of boardProxy
+    }
 
     public String getSymbol(int i, int j) {
         return cells[i][j];
@@ -96,7 +109,7 @@ public class TicTacToeBoard implements CellBoard {
 
     @Override
     public TicTacToeBoard move(Move move) {
-        history.add(this);
+        history.add(new Representation(this));
         TicTacToeBoard board = copy();
         board.setCell(move.getCell(), move.getPlayer().symbol());
         return board;
@@ -108,26 +121,37 @@ public class TicTacToeBoard implements CellBoard {
         for(int i=0; i<3; i++) {
             System.arraycopy(cells[i], 0, ticTacToeBoard.cells[i], 0, 3);
         }
+
+        ticTacToeBoard.history = history;
+
         return ticTacToeBoard;
     }
 }
 
 class History {
-    List<Board> boards = new ArrayList<>();
+    List<Representation> boards = new ArrayList<>();
 
-    public Board getBoardAtMove(int moveIndex) {
+    public Representation getBoardAtMove(int moveIndex) {
         for(int i=0; i<boards.size()-(moveIndex+1); i++) {
             boards.remove(boards.size()-1);
         }
         return boards.get(moveIndex);
     }
 
-    public Board undo() {
+    public Representation undo() {
         boards.remove(boards.size()-1);
         return boards.get(boards.size()-1);
     }
 
-    public void add(Board board) {
-        boards.add(board);
+    public void add(Representation representation) {
+        boards.add(representation);
+    }
+}
+
+class Representation { // Similar to BoardProxy - Proxy Design Pattern
+    String representation;
+
+    public Representation(TicTacToeBoard board) {
+        representation = board.toString();
     }
 }
