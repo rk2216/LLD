@@ -1,7 +1,7 @@
 import api.AIEngine;
 import api.GameEngine;
 import api.RuleEngine;
-import game.Board;
+import boards.Board;
 import game.Cell;
 import game.Move;
 import game.Player;
@@ -11,8 +11,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         GameEngine gameEngine = new GameEngine();
-        AIEngine aiEngine = new AIEngine();
         RuleEngine ruleEngine = new RuleEngine();
+        AIEngine aiEngine = new AIEngine(ruleEngine);
         Board board = gameEngine.start("TicTacToe");
 
         //make moves in a loop
