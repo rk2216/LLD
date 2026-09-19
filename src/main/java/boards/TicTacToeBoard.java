@@ -6,11 +6,16 @@ import game.Cell;
 import game.GameState;
 import game.Move;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class TicTacToeBoard implements CellBoard {
     String[][] cells = new String[3][3];
+
+    History history = new History();
+
     public String getSymbol(int i, int j) {
         return cells[i][j];
     }
@@ -90,8 +95,11 @@ public class TicTacToeBoard implements CellBoard {
     }
 
     @Override
-    public void move(Move move) {
-        setCell(move.getCell(), move.getPlayer().symbol());
+    public TicTacToeBoard move(Move move) {
+        history.add(this);
+        TicTacToeBoard board = copy();
+        board.setCell(move.getCell(), move.getPlayer().symbol());
+        return board;
     }
 
     @Override
@@ -101,5 +109,25 @@ public class TicTacToeBoard implements CellBoard {
             System.arraycopy(cells[i], 0, ticTacToeBoard.cells[i], 0, 3);
         }
         return ticTacToeBoard;
+    }
+}
+
+class History {
+    List<Board> boards = new ArrayList<>();
+
+    public Board getBoardAtMove(int moveIndex) {
+        for(int i=0; i<boards.size()-(moveIndex+1); i++) {
+            boards.remove(boards.size()-1);
+        }
+        return boards.get(moveIndex);
+    }
+
+    public Board undo() {
+        boards.remove(boards.size()-1);
+        return boards.get(boards.size()-1);
+    }
+
+    public void add(Board board) {
+        boards.add(board);
     }
 }
