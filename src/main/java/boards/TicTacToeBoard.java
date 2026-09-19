@@ -15,6 +15,17 @@ public class TicTacToeBoard implements CellBoard {
     String[][] cells;
     History history;
 
+    public static enum Symbol {
+        X("X"), O("O");
+        final  String marker;
+        Symbol(String marker){
+            this.marker = marker;
+        }
+        public String marker() {
+            return marker;
+        }
+    }
+
     public TicTacToeBoard() {
         cells =  new String[3][3];
         history = new History();

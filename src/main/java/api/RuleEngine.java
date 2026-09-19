@@ -1,11 +1,17 @@
 package api;
 
 import boards.Board;
+import boards.CellBoard;
 import boards.TicTacToeBoard;
+import boards.TicTacToeBoard.Symbol;
 import game.*;
+import placements.DefensivePlacement;
+import placements.OffensivePlacement;
+import placements.Placement;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class RuleEngine {
 
@@ -16,38 +22,33 @@ public class RuleEngine {
         ruleMap.put(key, TicTacToeBoard.getRules());
     }
 
-    public GameInfo getInfo(Board board) {
+    public GameInfo getInfo(CellBoard board) {
         if(board instanceof TicTacToeBoard) {
-            GameState gameState = getState(board);
-            String[] players = new String[]{"X", "O"};
-            Cell forkCell = null;
-            for(int index = 0; index < 2; index++) {
+            TicTacToeBoard ticTacToeBoard = (TicTacToeBoard) board;
+            GameState gameState = getState(ticTacToeBoard);
+            for(Symbol symbol : Symbol.values()) {
+                Player player = new Player(symbol.marker());
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        Player player = new Player(players[index]);
-                        Board boardCopy = board.move(new Move(new Cell(i, j), player));
-                        boolean canStillWin = false;
-                        for (int k = 0; k < 3; k++) {
-                            for (int l = 0; l < 3; l++) {
-                                forkCell = new Cell(k, l);
-                                Board b = boardCopy.move(new Move(forkCell, player.flip()));
-                                if (getState(b).getWinner().equals(player.flip().symbol())) {
-                                    canStillWin = true;
-                                    break;
+                        if(ticTacToeBoard.getSymbol(i, j) == null) {
+                            TicTacToeBoard b = ticTacToeBoard.move(new Move(new Cell(i, j), player));
+                            //force opponent to make a defensive move
+                            Placement defense  = DefensivePlacement.get();
+                            Optional<Cell> defensiveCell = defense.place(b, player.flip());
+                            if(defensiveCell.isPresent()) {
+                                b = b.move(new Move(defensiveCell.get(), player.flip()));
+                                OffensivePlacement offense = OffensivePlacement.get();
+                                Optional<Cell> offensiveCell = offense.place(b, player);
+                                if(offensiveCell.isPresent()) {
+                                    return new GameInfoBuilder()
+                                            .isOver(gameState.isOver())
+                                            .winner(gameState.getWinner())
+                                            .hasFork(true)
+                                            .forkCell(new Cell(i, j))
+                                            .player(player.flip())
+                                            .build();
                                 }
                             }
-                            if (canStillWin) {
-                                break;
-                            }
-                        }
-                        if (canStillWin) {
-                            return new GameInfoBuilder()
-                                    .isOver(gameState.isOver())
-                                    .winner(gameState.getWinner())
-                                    .hasFork(true)
-                                    .forkCell(forkCell)
-                                    .player(player.flip())
-                                    .build();
                         }
                     }
                 }
