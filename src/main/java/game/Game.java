@@ -22,25 +22,19 @@ public class Game {
     }
 
     private void moveForTimedGame(Move move, int timeTakenSinceLastMove) {
+        final int currentTime, endTime;
         if(gameConfig.timePerMove != null) {
-            if (moveMadeInTime(timeTakenSinceLastMove)){
-                board.move(move);
-            } else {
-                winner = move.getPlayer().flip();
-            }
+            currentTime = timeTakenSinceLastMove;
+            endTime = maxTimePerMove;
         } else {
-            if (moveMadeInTime(move.getPlayer())) {
-                board.move(move);
-            } else {
-                winner = move.getPlayer().flip();
-            }
+            currentTime = move.getPlayer().getTimeUsedInMillis();
+            endTime = maxTimePerPlayer;
         }
-    }
 
-    private boolean moveMadeInTime(int timeTakenSinceLastMove) {
-        return timeTakenSinceLastMove < maxTimePerMove;
-    }
-    private boolean moveMadeInTime(Player player) {
-        return player.getTimeUsedInMillis() < maxTimePerPlayer;
+        if (currentTime < endTime){
+            board.move(move);
+        } else {
+            winner = move.getPlayer().flip();
+        }
     }
 }
