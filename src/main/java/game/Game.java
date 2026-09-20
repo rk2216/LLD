@@ -7,9 +7,18 @@ public class Game {
     private Board board;
     Player winner;
 
-    private int lastMoveTimeInMillis;
-    private int maxTimePerPlayer;
-    private int maxTimePerMove;
+    private Integer lastMoveTimeInMillis;
+    private Integer maxTimePerPlayer;
+    private Integer maxTimePerMove;
+
+    public Game(GameConfig gameConfig, Board board, Player winner, Integer lastMoveTimeInMillis, Integer maxTimePerPlayer, Integer maxTimePerMove){
+        this.gameConfig = gameConfig;
+        this.board = board;
+        this.winner = winner;
+        this.lastMoveTimeInMillis = lastMoveTimeInMillis;
+        this.maxTimePerMove = maxTimePerMove;
+        this.maxTimePerPlayer = maxTimePerPlayer;
+    }
 
     public void move(Move move, int timestampInMillis) {
         int timeTakenSinceLastMove = timestampInMillis - lastMoveTimeInMillis;
