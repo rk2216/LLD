@@ -27,12 +27,12 @@ public class Main {
 
             Player human = new Player("X");
             Move humanMove = new Move(new Cell(row, col), human);
-            gameEngine.move(board, humanMove);
+            board = gameEngine.move(board, humanMove);
 
             Player computer = new Player("O");
             if(!ruleEngine.getState(board).isOver()) {
                 Move computerMove = aiEngine.suggestMove(computer, board);
-                gameEngine.move(board, computerMove);
+                board = gameEngine.move(board, computerMove);
             }
 
         }

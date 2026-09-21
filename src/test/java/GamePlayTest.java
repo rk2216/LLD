@@ -19,7 +19,7 @@ public class GamePlayTest {
         ruleEngine = new RuleEngine();
     }
 
-    private void playGame(Board board, int[][] firstPlayerMoves, int[][] secondPlayerMoves) {
+    private Board playGame(Board board, int[][] firstPlayerMoves, int[][] secondPlayerMoves) {
         int row, col;
         int next = 0;
         while(!ruleEngine.getState(board).isOver()) {
@@ -29,19 +29,21 @@ public class GamePlayTest {
 
             Player human = new Player("X");
             Move humanMove = new Move(new Cell(row, col), human);
-            gameEngine.move(board, humanMove);
+            board = gameEngine.move(board, humanMove);
 
             Player computer = new Player("O");
             if(!ruleEngine.getState(board).isOver()) {
                 int sRow = secondPlayerMoves[next][0];
                 int sCol = secondPlayerMoves[next][1];
                 Move computerMove = new Move(new Cell(sRow, sCol), computer);
-                gameEngine.move(board, computerMove);
+                board = gameEngine.move(board, computerMove);
             }
 
             next++;
 
         }
+
+        return board;
     }
 
     @Test
@@ -51,7 +53,7 @@ public class GamePlayTest {
 
         int[][] firstPlayerMoves = new int[][]{{1,0}, {1, 1}, {1, 2}};
         int[][] secondPlayerMoves = new int[][]{{0,0}, {0, 1}, {0, 2}};
-        playGame(board, firstPlayerMoves, secondPlayerMoves);
+        board = playGame(board, firstPlayerMoves, secondPlayerMoves);
 
         assertTrue(ruleEngine.getState(board).isOver());
         assertEquals(ruleEngine.getState(board).getWinner(), "X");
@@ -66,7 +68,7 @@ public class GamePlayTest {
         int row, col;
         int[][] firstPlayerMoves = new int[][]{{0,0}, {1, 0}, {2, 0}};
         int[][] secondPlayerMoves = new int[][]{{0, 1}, {0, 2}, {1, 1}};
-        playGame(board, firstPlayerMoves, secondPlayerMoves);
+        board = playGame(board, firstPlayerMoves, secondPlayerMoves);
 
         assertTrue(ruleEngine.getState(board).isOver());
         assertEquals(ruleEngine.getState(board).getWinner(), "X");
@@ -81,7 +83,7 @@ public class GamePlayTest {
         int row, col;
         int[][] firstPlayerMoves = new int[][]{{0,0}, {1, 1}, {2, 2}};
         int[][] secondPlayerMoves = new int[][]{{1,0}, {2, 1}, {1, 2}};
-        playGame(board, firstPlayerMoves, secondPlayerMoves);
+        board = playGame(board, firstPlayerMoves, secondPlayerMoves);
 
         assertTrue(ruleEngine.getState(board).isOver());
         assertEquals(ruleEngine.getState(board).getWinner(), "X");
@@ -96,7 +98,7 @@ public class GamePlayTest {
         int row, col;
         int[][] firstPlayerMoves = new int[][]{{0,2}, {1, 1}, {2, 0}};
         int[][] secondPlayerMoves = new int[][]{{1,0}, {0, 1}, {1, 2}};
-        playGame(board, firstPlayerMoves, secondPlayerMoves);
+        board = playGame(board, firstPlayerMoves, secondPlayerMoves);
 
         assertTrue(ruleEngine.getState(board).isOver());
         assertEquals(ruleEngine.getState(board).getWinner(), "X");
@@ -111,7 +113,7 @@ public class GamePlayTest {
         int row, col;
         int[][] firstPlayerMoves = new int[][]{{1, 0}, {1, 1}, {2, 0}};
         int[][] secondPlayerMoves = new int[][]{{0,0}, {0, 1}, {0, 2}};
-        playGame(board, firstPlayerMoves, secondPlayerMoves);
+        board = playGame(board, firstPlayerMoves, secondPlayerMoves);
 
         assertTrue(ruleEngine.getState(board).isOver());
         assertEquals(ruleEngine.getState(board).getWinner(), "O");

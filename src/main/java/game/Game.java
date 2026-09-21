@@ -26,7 +26,7 @@ public class Game {
         if(gameConfig.timed) {
             moveForTimedGame(move, timeTakenSinceLastMove);
         } else {
-            board.move(move);
+            board = board.move(move);
         }
     }
 
@@ -41,7 +41,7 @@ public class Game {
         }
 
         if (currentTime < endTime){
-            board.move(move);
+            board = board.move(move);
         } else {
             winner = move.getPlayer().flip();
         }
