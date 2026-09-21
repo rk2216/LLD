@@ -25,4 +25,8 @@ public class Player {
     public int getTimeUsedInMillis() {
         return timeUsedInMillis;
     }
+
+    public User getUser() {
+        return id;
+    }
 }
