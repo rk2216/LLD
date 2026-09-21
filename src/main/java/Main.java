@@ -1,9 +1,7 @@
-import api.AIEngine;
-import api.EmailService;
-import api.GameEngine;
-import api.RuleEngine;
+import api.*;
 import boards.Board;
-import commands.builder.SendEmailCommandBuilder;
+import commands.builder.EmailCommandBuilder;
+import commands.builder.SMSCommandBuilder;
 import game.Cell;
 import game.Move;
 import game.Player;
@@ -17,6 +15,7 @@ public class Main {
         RuleEngine ruleEngine = new RuleEngine();
         AIEngine aiEngine = new AIEngine();
         EmailService emailService = new EmailService();
+        SMSService smsService = new SMSService();
         Board board = gameEngine.start("TicTacToe");
 
         //make moves in a loop
@@ -27,7 +26,13 @@ public class Main {
         Player computer = new Player("O");
 
         if(human.getUser().activeAfter(10, TimeUnit.DAYS)) {
-            emailService.send(new SendEmailCommandBuilder()
+            emailService.send(new EmailCommandBuilder()
+                    .user(human.getUser())
+                    .message("We are glad you are back!")
+                    .link("https://www.google.com")
+                    .build()
+            );
+            smsService.send(new SMSCommandBuilder()
                     .user(human.getUser())
                     .message("We are glad you are back!")
                     .build()
@@ -50,7 +55,12 @@ public class Main {
 
         }
         if(ruleEngine.getState(board).getWinner().equals(human.symbol())) {
-            emailService.send(new SendEmailCommandBuilder()
+            emailService.send(new EmailCommandBuilder()
+                    .user(human.getUser())
+                    .message("Congratulations on the win!")
+                    .build()
+            );
+            smsService.send(new SMSCommandBuilder()
                     .user(human.getUser())
                     .message("Congratulations on the win!")
                     .build()

@@ -2,15 +2,12 @@ package commands.implementations;
 
 import game.User;
 
-public class SendEmailCommand {
+public class NotificationDetails {
     User receiver;
     String message;
-    String link;
-    String templateId;
-    String templateString;
 
-    public SendEmailCommand(User user, String message) {
-        receiver = user;
+    public NotificationDetails(User user, String message) {
+        this.receiver = user;
         this.message = message;
     }
 
