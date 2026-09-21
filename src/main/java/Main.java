@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         GameEngine gameEngine = new GameEngine();
         RuleEngine ruleEngine = new RuleEngine();
-        AIEngine aiEngine = new AIEngine(ruleEngine);
+        AIEngine aiEngine = new AIEngine();
         Board board = gameEngine.start("TicTacToe");
 
         //make moves in a loop
