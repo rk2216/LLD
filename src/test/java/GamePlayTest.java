@@ -28,14 +28,14 @@ public class GamePlayTest {
             col = firstPlayerMoves[next][1];
 
             Player human = new Player("X");
-            Move humanMove = new Move(new Cell(row, col), human);
+            Move humanMove = new Move(Cell.getCell(row, col), human);
             board = gameEngine.move(board, humanMove);
 
             Player computer = new Player("O");
             if(!ruleEngine.getState(board).isOver()) {
                 int sRow = secondPlayerMoves[next][0];
                 int sCol = secondPlayerMoves[next][1];
-                Move computerMove = new Move(new Cell(sRow, sCol), computer);
+                Move computerMove = new Move(Cell.getCell(sRow, sCol), computer);
                 board = gameEngine.move(board, computerMove);
             }
 

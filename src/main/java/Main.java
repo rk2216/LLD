@@ -26,7 +26,7 @@ public class Main {
             col = scanner.nextInt();
 
             Player human = new Player("X");
-            Move humanMove = new Move(new Cell(row, col), human);
+            Move humanMove = new Move(Cell.getCell(row, col), human);
             board = gameEngine.move(board, humanMove);
 
             Player computer = new Player("O");

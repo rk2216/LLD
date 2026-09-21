@@ -13,6 +13,7 @@ public class GameFactory {
                 maxTimePerMove
         );
     }
+
     public Game createGame(Integer maxTimePerMove, Integer maxTimePerPlayer, TicTacToeBoard startingBoard) {
         return new Game(
                 new GameConfig(maxTimePerPlayer, maxTimePerPlayer != null),
@@ -21,6 +22,28 @@ public class GameFactory {
                 0,
                 maxTimePerPlayer,
                 maxTimePerMove
+        );
+    }
+
+    public Game createGame() {
+        return new Game(
+                new GameConfig(null, false),
+                new TicTacToeBoard(),
+                null,
+                0,
+                null,
+                null
+        );
+    }
+
+    public Game createGame(int maxTimePerPlayer) {
+        return new Game(
+                new GameConfig(maxTimePerPlayer, true),
+                new TicTacToeBoard(),
+                null,
+                0,
+                maxTimePerPlayer,
+                null
         );
     }
 }
