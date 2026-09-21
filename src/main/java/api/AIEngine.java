@@ -3,30 +3,18 @@ package api;
 import boards.Board;
 import boards.TicTacToeBoard;
 import game.*;
-import placements.OffensivePlacement;
-import placements.Placement;
-
-import java.util.Optional;
+import strategy.Strategy;
+import strategy.StrategyFactory;
 
 public class AIEngine {
-    private RuleEngine ruleEngine;
 
-    public AIEngine(RuleEngine ruleEngine) {
-        this.ruleEngine = ruleEngine;
-    }
+    StrategyFactory strategyFactory = new StrategyFactory();
 
     public Move suggestMove(Player player, Board board) {
         if(board instanceof TicTacToeBoard) {
-            TicTacToeBoard board1 = (TicTacToeBoard) board;
-            Cell suggestion;
-            int threshold = 3;
-            if(countMoves(board1) < threshold) {
-                suggestion = getBasicMove(board1);
-            } else if (countMoves(board1) < threshold + 1){
-                suggestion = getCellToPlay(player, board1);
-            } else {
-                suggestion = getOptimalMove(player, board1);
-            }
+            TicTacToeBoard b = (TicTacToeBoard) board;
+            Strategy strategy = strategyFactory.getStrategy(b, player);
+            Cell suggestion = strategy.getOptimalMove(b, player);
             if(suggestion != null)
                 return new Move(suggestion, player);
             throw new IllegalStateException();
@@ -35,81 +23,4 @@ public class AIEngine {
         }
     }
 
-    private Cell getOptimalMove(Player player, TicTacToeBoard board) {
-        Placement placement = OffensivePlacement.get();
-        while(placement.next() != null) {
-            Optional<Cell> place = placement.place(board, player);
-            if(place.isPresent()){
-                return place.get();
-            }
-            placement = placement.next();
-        }
-
-        return null;
-    }
-
-    private int countMoves(TicTacToeBoard board) {
-        int count = 0;
-        for(int i=0; i<3; i++) {
-            for(int j=0; j<3; j++) {
-                if(board.getSymbol(i, j) != null) {
-                    count++;
-                }
-            }
-        }
-
-        return count;
-    }
-
-    private Cell getBasicMove(TicTacToeBoard board) {
-        for(int i=0; i<3; i++) {
-            for(int j=0; j<3; j++) {
-                if(board.getSymbol(i, j) == null) {
-                    return Cell.getCell(i, j);
-                }
-            }
-        }
-        return null;
-    }
-
-    private Cell getCellToPlay(Player player, TicTacToeBoard board) {
-        //Attacking Move
-        Cell best = offense(player, board);
-        if (best != null) return best;
-        //Defensive Move
-        best = defense(player, board);
-        if (best != null) return best;
-
-        return getBasicMove(board);
-    }
-
-    private Cell offense(Player player, TicTacToeBoard board) {
-        for(int i=0; i<3; i++) {
-            for(int j=0; j<3; j++) {
-                if(board.getSymbol(i, j) == null) {
-                    Move move = new Move(Cell.getCell(i, j), player);
-                    TicTacToeBoard boardCopy = board.move(move);
-                    if(ruleEngine.getState(boardCopy).isOver()) {
-                        return move.getCell();
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private Cell defense(Player player, TicTacToeBoard board) {
-        for(int i=0; i<3; i++) {
-            for(int j=0; j<3; j++) {
-                if(board.getSymbol(i, j) == null) {
-                    Move move = new Move(Cell.getCell(i, j), player.flip());
-                    TicTacToeBoard boardCopy = board.move(move);
-                    if(ruleEngine.getState(boardCopy).isOver()) {
-                        return Cell.getCell(i, j);
-                    }
-                }
-            }
-        }
-        return null;
-    }
 }
