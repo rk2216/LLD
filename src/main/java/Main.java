@@ -63,7 +63,7 @@ public class Main {
                     human.getUser(),
                     "Congratulations on the win!",
                     null,
-                    "ACTIVITY"
+                    "WIN"
             ));
         }
         System.out.println("Game Result: " + ruleEngine.getState(board));
