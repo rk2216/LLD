@@ -1,4 +1,4 @@
-package api;
+package services;
 
 import commands.implementations.SMSCommand;
 import game.User;
@@ -8,7 +8,8 @@ public class SMSService {
         // send SMS
     }
 
-    public void send(SMSCommand command) {
-        sendSMS(command.getDetails().getReceiver(), command.getDetails().getMessage());
+    public Void send(SMSCommand command) {
+        sendSMS(command.getReceiver(), command.getMessage());
+        return null;
     }
 }
