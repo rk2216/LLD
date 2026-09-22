@@ -1,4 +1,4 @@
-package api;
+package services;
 
 import commands.implementations.EmailCommand;
 import game.User;
@@ -8,7 +8,8 @@ public class EmailService {
         // send email
     }
 
-    public void send(EmailCommand command) {
-        sendEmail(command.getDetails().getReceiver(), command.getDetails().getMessage());
+    public Void send(EmailCommand command) {
+        sendEmail(command.getReceiver(), command.getMessage());
+        return null;
     }
 }
